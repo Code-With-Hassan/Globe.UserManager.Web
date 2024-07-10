@@ -1,3 +1,9 @@
+using Globe.Shared.RestCallManager.Services.HttpClientService;
+using Globe.Shared.RestCallManager.Services.HttpClientService.Impl;
+using Globe.Shared.RestCallManager.Services.RestClientManager;
+using Globe.Shared.RestCallManager.Services.RestClientManager.Impl;
+using Globe.Shared.RestCallManager.Services.TokenManagerService;
+using Globe.Shared.RestCallManager.Services.TokenManagerService.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -42,6 +48,13 @@ namespace Globe.UserManager.Web
                     ClockSkew = TimeSpan.Zero
                 };
             });
+
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ITokenManager, TokenManager>();
+            builder.Services.AddScoped<IHttpClient, HttpClientWrapper>();
+            builder.Services.AddScoped<IRestClientManager, RestClientManager>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

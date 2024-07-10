@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Globe\Globe.Shared.Models\Globe.Shared.Models.csproj" />
+    <ProjectReference Include="..\Globe.Shared.RestCallManager\Globe.Shared.RestCallManager.csproj" />
   </ItemGroup>
 
 </Project>
