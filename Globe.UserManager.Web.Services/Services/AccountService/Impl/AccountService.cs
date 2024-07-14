@@ -3,8 +3,9 @@ using Globe.Shared.RestCallManager.Models;
 using Globe.Shared.RestCallManager.Services.RestClientManager;
 using Globe.Shared.Models;
 using Globe.Shared.Models.ResponseDTOs;
+using Globe.UserManager.Web.Services.Repositories;
 
-namespace Globe.UserManager.Web.Services.AccountService.Impl
+namespace Globe.UserManager.Web.Services.Services.AccountService.Impl
 {
     public class AccountService : IAccountService
     {
@@ -20,7 +21,7 @@ namespace Globe.UserManager.Web.Services.AccountService.Impl
         {
             try
             {
-                return await _restClientManager.PostAsync<LoginDTO, LoginModel>("https://localhost:7084/api/Auth/Login", model);
+                return await _restClientManager.PostAsync<LoginDTO, LoginModel>(AccountProxy.Login, model);
             }
             catch (Exception ex)
             {

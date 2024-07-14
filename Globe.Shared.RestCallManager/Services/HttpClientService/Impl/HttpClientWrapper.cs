@@ -7,6 +7,7 @@ namespace Globe.Shared.RestCallManager.Services.HttpClientService.Impl
     {
         private readonly HttpClient _httpClient;
         private readonly ITokenManager _tokenManager;
+        private readonly string baseURL = "https://localhost:7084/api/";
 
         public HttpClientWrapper(ITokenManager tokenManager)
         {
@@ -28,24 +29,29 @@ namespace Globe.Shared.RestCallManager.Services.HttpClientService.Impl
 
         public async Task<HttpResponseMessage> GetAsync(string url, bool isPublic = true)
         {
+            url = baseURL + url;
+
             AddAuthorizationHeader(isPublic);
             return await _httpClient.GetAsync(url);
         }
 
         public async Task<HttpResponseMessage> PostAsync(string url, HttpContent content, bool isPublic = true)
         {
+            url = baseURL + url;
             AddAuthorizationHeader(isPublic);
             return await _httpClient.PostAsync(url, content);
         }
 
         public async Task<HttpResponseMessage> PutAsync(string url, HttpContent content, bool isPublic = true)
         {
+            url = baseURL + url;
             AddAuthorizationHeader(isPublic);
             return await _httpClient.PutAsync(url, content);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string url, bool isPublic = true)
         {
+            url = baseURL + url;
             AddAuthorizationHeader(isPublic);
             return await _httpClient.DeleteAsync(url);
         }

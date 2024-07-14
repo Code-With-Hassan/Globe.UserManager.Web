@@ -3,11 +3,10 @@ using Globe.Shared.Models.ResponseDTOs;
 using Globe.Shared.RestCallManager.Constants;
 using Globe.Shared.RestCallManager.Models;
 using Globe.Shared.RestCallManager.Services.TokenManagerService;
-using Globe.UserManager.Web.Services.AccountService;
+using Globe.UserManager.Web.Services.Services.AccountService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 

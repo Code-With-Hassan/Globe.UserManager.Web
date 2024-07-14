@@ -5,8 +5,10 @@ using Globe.Shared.RestCallManager.Services.RestClientManager;
 using Globe.Shared.RestCallManager.Services.RestClientManager.Impl;
 using Globe.Shared.RestCallManager.Services.TokenManagerService;
 using Globe.Shared.RestCallManager.Services.TokenManagerService.Impl;
-using Globe.UserManager.Web.Services.AccountService;
-using Globe.UserManager.Web.Services.AccountService.Impl;
+using Globe.UserManager.Web.Services.Services.AccountService;
+using Globe.UserManager.Web.Services.Services.AccountService.Impl;
+using Globe.UserManager.Web.Services.Services.UserService;
+using Globe.UserManager.Web.Services.Services.UserService.Impl;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using System.Text;
@@ -59,6 +61,7 @@ namespace Globe.UserManager.Web
             builder.Services.AddScoped<IRestClientManager, RestClientManager>();
 
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 

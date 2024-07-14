@@ -2,6 +2,7 @@
 using System.Text;
 using Globe.Shared.RestCallManager.Services.HttpClientService;
 using Globe.Shared.RestCallManager.Models;
+using System.Text.Json.Serialization;
 
 namespace Globe.Shared.RestCallManager.Services.RestClientManager.Impl
 {
@@ -21,7 +22,13 @@ namespace Globe.Shared.RestCallManager.Services.RestClientManager.Impl
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string content = await response.Content.ReadAsStringAsync();
-                T data = JsonSerializer.Deserialize<T>(content);
+                Console.WriteLine(content);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                T data = JsonSerializer.Deserialize<T>(content, options);
                 return new Response<T> { Success = true, Data = data };
             }
             catch (Exception ex)
