@@ -1,4 +1,4 @@
-﻿using Globe.Shared.Models;
+﻿using Globe.Shared.RestCallManager.Models;
 
 namespace Globe.Shared.RestCallManager.Services.RestClientManager
 {

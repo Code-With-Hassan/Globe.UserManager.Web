@@ -1,5 +1,9 @@
 ﻿using Globe.Shared.RestCallManager.Constants;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Globe.Shared.RestCallManager.Services.TokenManagerService.Impl
 {
@@ -8,14 +12,18 @@ namespace Globe.Shared.RestCallManager.Services.TokenManagerService.Impl
     /// </summary>
     public class TokenManager : ITokenManager
     {
+        private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="httpContextAccessor"></param>
-        public TokenManager(IHttpContextAccessor httpContextAccessor)
+        /// <param name="configuration"></param>
+        public TokenManager(IHttpContextAccessor httpContextAccessor, 
+            IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -32,8 +40,6 @@ namespace Globe.Shared.RestCallManager.Services.TokenManagerService.Impl
             cookies.TryGetValue(SharedConstants.JWT_Token, out token);
 
             return token;
-
-
         }
 
         /// <summary>
@@ -51,5 +57,39 @@ namespace Globe.Shared.RestCallManager.Services.TokenManagerService.Impl
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             });
         }
+
+        public string ValidateToken(string token)
+        {
+            if (token == null)
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+
+                }, out SecurityToken validatedToken);
+
+                // Corrected access to the validatedToken
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var jku = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Jti).Value;
+                var userName = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Name).Value;
+
+                return userName;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
     }
 }

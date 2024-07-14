@@ -4,5 +4,6 @@
     {
         string GetTokenFromCookies();
         void SaveTokenToCookies(string token);
+        string ValidateToken(string token);
     }
 }

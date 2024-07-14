@@ -1,11 +1,13 @@
+using Globe.Shared.Entities;
 using Globe.Shared.RestCallManager.Services.HttpClientService;
 using Globe.Shared.RestCallManager.Services.HttpClientService.Impl;
 using Globe.Shared.RestCallManager.Services.RestClientManager;
 using Globe.Shared.RestCallManager.Services.RestClientManager.Impl;
 using Globe.Shared.RestCallManager.Services.TokenManagerService;
 using Globe.Shared.RestCallManager.Services.TokenManagerService.Impl;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Globe.UserManager.Web.Services.AccountService;
+using Globe.UserManager.Web.Services.AccountService.Impl;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using System.Text;
 
@@ -28,36 +30,35 @@ namespace Globe.UserManager.Web
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
-            builder.Services.AddAuthentication(x =>
+
+            builder.Services.AddControllersWithViews();
+
+            builder.Services.AddAuthentication(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options =>
             {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    ClockSkew = TimeSpan.Zero
-                };
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             });
 
-            builder.Services.AddHttpContextAccessor();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ITokenManager, TokenManager>();
             builder.Services.AddScoped<IHttpClient, HttpClientWrapper>();
             builder.Services.AddScoped<IRestClientManager, RestClientManager>();
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             var app = builder.Build();
 
@@ -69,6 +70,13 @@ namespace Globe.UserManager.Web
                 app.UseHsts();
             }
 
+            var cookiePolicyOptions = new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+            };
+
+            app.UseCookiePolicy(cookiePolicyOptions);
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -79,7 +87,7 @@ namespace Globe.UserManager.Web
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
             app.Run();
         }
