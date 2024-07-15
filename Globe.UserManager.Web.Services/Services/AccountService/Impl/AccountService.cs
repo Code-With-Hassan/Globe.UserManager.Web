@@ -21,7 +21,7 @@ namespace Globe.UserManager.Web.Services.Services.AccountService.Impl
         {
             try
             {
-                return await _restClientManager.PostAsync<LoginDTO, LoginModel>(AccountProxy.Login, model);
+                return await _restClientManager.PostAsync<LoginDTO, LoginModel, LoginAsync>(new LoginAsync(), model);
             }
             catch (Exception ex)
             {

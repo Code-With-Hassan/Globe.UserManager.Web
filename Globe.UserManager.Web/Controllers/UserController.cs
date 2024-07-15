@@ -1,8 +1,10 @@
 ﻿using Globe.UserManager.Web.Services.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Globe.UserManager.Web.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;

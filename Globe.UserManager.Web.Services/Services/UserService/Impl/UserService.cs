@@ -25,7 +25,7 @@ namespace Globe.UserManager.Web.Services.Services.UserService.Impl
         {
             try
             {
-                Response<UsersListResponse> response = await _restClientManager.GetAsync<UsersListResponse>(UserProxy.GetAllUsers);
+                Response<UsersListResponse> response = await _restClientManager.GetAsync<UsersListResponse, GetAllUsers>(new GetAllUsers());
 
                 return response.Data;
             }
