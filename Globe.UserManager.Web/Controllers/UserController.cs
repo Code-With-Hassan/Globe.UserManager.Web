@@ -20,6 +20,7 @@ namespace Globe.UserManager.Web.Controllers
         {
             try
             {
+                
                 return View(await _userService.GetAllUsers());
             }
             catch (Exception ex)

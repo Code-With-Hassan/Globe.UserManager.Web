@@ -7,7 +7,7 @@ namespace Globe.Shared.RestCallManager.Services.HttpClientService.Impl
     {
         private readonly HttpClient _httpClient;
         private readonly ITokenManager _tokenManager;
-        private readonly string baseURL = "https://localhost:7084/api/";
+        private readonly string baseURL = "http://localhost:9000/api/";
 
         public HttpClientWrapper(ITokenManager tokenManager)
         {
